@@ -1,0 +1,24 @@
+#!/bin/zsh 
+make CONV=conv-float
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x
+
+make CONV=conv-int
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x
+
+make CONV=conv-unrolled-float
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x
+
+make CONV=conv-unrolled-int
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x
+
+make CONV=conv-loop4
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x
+
+make CONV=conv-v4si
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x
+
+make CONV=conv-mmx
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x
+
+make CONV=conv-sse
+time ./mjpeg ../tp2_src/ice_age_256x144_444.mjpeg -1 x

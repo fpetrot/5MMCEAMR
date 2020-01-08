@@ -764,7 +764,6 @@ namespace bt9 {
                 bt9_reader_ = rhs.bt9_reader_;
                 reach_end_ = rhs.reach_end_;
                 index_ = rhs.index_;
-                br_inst_ = rhs.br_inst_;
                 
                 return *this;
             }

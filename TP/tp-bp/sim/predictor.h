@@ -12,6 +12,8 @@
 #include <math.h>
 #include "utils.h"
 
+#define BIMODAL
+
 
 /* FP: Nombre de bits de PC utilisés pour indexer la table, utilisé pour définir la taille de la table */
 /* FP: Nombre de bits par entrée la table: 1 => last value, 2 => bimodal, 3 => ... */
@@ -29,11 +31,18 @@ class PREDICTOR {
   */
  private:
    uint32_t *table;   // table contenant les compteurs à saturation
+#ifdef BIMODAL
    uint32_t pcmask;   // masque pour n'accéder qu'aux bits significatifs de PC
 
  public:
    uint32_t nentries; // nombre d'entrées dans la table
    uint32_t countmax; // valeur max atteinte par le compteur à saturation
+#else
+ public:
+   uint32_t histval; // nombre d'entrées dans la table
+   uint32_t nentries; // nombre d'entrées dans la table
+   uint32_t countmax; // valeur max atteinte par le compteur à saturation
+#endif
 
    PREDICTOR(char *progname, int argc, char *argv[]);
 

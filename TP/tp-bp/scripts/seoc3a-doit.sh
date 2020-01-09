@@ -4,27 +4,28 @@
 # This software is open source, feel free to use it and modify it at your own risk
 ##################################################################################
 
-num_parallel_jobs=8
+num_parallel_jobs=4
 
 # Paramètres que l'on cherche à faire varier
 count_sizes=($(seq 1 6))
 array_sizes=(7 8 9 10 11 16)
 
-if test 1 -ne 0 ; then
-   # Nombre de bits du compteur
-   for i in ${count_sizes[*]} ; do
-      # Taille du tableau
-      for j in ${array_sizes[*]} ; do
-         ./runall.pl -s ../sim/predictor -w seoc -f  $num_parallel_jobs -d ../results/${i}-${j} -p $j $i
-      done
-   done
-fi
+#if test 1 -ne 0 ; then
+#   # Nombre de bits du compteur
+#   for i in ${count_sizes[*]} ; do
+#      # Taille du tableau
+#      for j in ${array_sizes[*]} ; do
+#         ./runall.pl -s ../sim/predictor -w seoc -f  $num_parallel_jobs -d ../results/${i}-${j} -p $j $i
+#      done
+#   done
+#fi
 
 # Liste des benchs
-benchs=$(ls -1 ../results/1-4 | awk -F\. '{print $1}')
+benchs=$(ls -1 ../results/1-7 | awk -F\. '{print $1}')
 
 # Fichier temporaire
 # tmpfile=$(mktemp)
+
 tmpfile=1
 rm -f 1
 
@@ -68,7 +69,7 @@ for i in ${count_sizes[*]} ; do
    echo "plt.legend(loc='upper right')"                               >> plot_$i.py
    echo "plt.subplot().set_yscale('log', nonposy='clip')"             >> plot_$i.py
    echo "plt.legend(loc='upper right')"                               >> plot_$i.py
-   echo "f.savefig('"graph_$i"', bbox_inches='tight')"                >> plot_$i.py
+   echo "f.savefig('"graph_$i.pdf"', bbox_inches='tight')"                >> plot_$i.py
    python plot_$i.py
    rm plot_$i.py
 done

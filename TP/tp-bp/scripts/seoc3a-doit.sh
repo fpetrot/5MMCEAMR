@@ -10,15 +10,15 @@ num_parallel_jobs=4
 count_sizes=($(seq 1 6))
 array_sizes=(7 8 9 10 11 16)
 
-#if test 1 -ne 0 ; then
-#   # Nombre de bits du compteur
-#   for i in ${count_sizes[*]} ; do
-#      # Taille du tableau
-#      for j in ${array_sizes[*]} ; do
-#         ./runall.pl -s ../sim/predictor -w seoc -f  $num_parallel_jobs -d ../results/${i}-${j} -p $j $i
-#      done
-#   done
-#fi
+if test 1 -ne 0 ; then
+   # Nombre de bits du compteur
+   for i in ${count_sizes[*]} ; do
+      # Taille du tableau
+      for j in ${array_sizes[*]} ; do
+         ./runall.pl -s ../sim/predictor -w seoc -f  $num_parallel_jobs -d ../results/${i}-${j} -p $j $i
+      done
+   done
+fi
 
 # Liste des benchs
 benchs=$(ls -1 ../results/1-7 | awk -F\. '{print $1}')

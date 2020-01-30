@@ -24,6 +24,7 @@
  ******************************************************************************/
 #include "stdio.h"
 #include "stdlib.h"
+#include "x86intrin.h"
 #include "SDL/SDL.h"
 #include "define_common.h"
 
@@ -115,13 +116,14 @@ void screen_cpyrect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, void *ptr)
 int screen_refresh() 
 {
 	SDL_Rect offset ;
-	uint64_t new_time, finish_time ;
+	uint64_t new_time;
+	static uint64_t finish_clock, old_clock ;
 	SDL_Event event ;
 	offset.x = 0 ;
 	offset.y = 0 ;
 	SDL_BlitSurface (image, &offset, screen, &offset) ;
 	new_time = SDL_GetTicks() ;
-	finish_time = SDL_GetTicks() ;
+	finish_clock = _rdtsc() ;
 	while (new_time - old_time < 1000 / 25) {
 		new_time = SDL_GetTicks() ;
 	}
@@ -129,8 +131,9 @@ int screen_refresh()
 		printf("Could not refresh screen: %s\n.", SDL_GetError() );
 	}
 	IPRINTF("[screen]: instantaneous fps is %0.2f\n", 1000.00f / (SDL_GetTicks() - old_time)) ;
-	printf("[screen] : framerate is %0.2ffps, computed one image in %0.2fms\n", 1000.00f / (SDL_GetTicks() - old_time), (finish_time - old_time) * 1.00f) ;
+	printf("[screen] : framerate is %0.2ffps, computed one image in %lu clock cycles\n", 1000.00f / (SDL_GetTicks() - old_time), finish_clock - old_clock) ;
 	old_time = SDL_GetTicks() ;
+	old_clock = _rdtsc() ;
 	// In this case, SDL is 
 	if(SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT) {
@@ -141,6 +144,3 @@ int screen_refresh()
 	}
 	return 0 ;
 }
-
-
-

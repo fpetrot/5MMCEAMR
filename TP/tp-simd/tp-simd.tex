@@ -35,7 +35,7 @@
 Utilisation des extensions SSE du x86\_64 pour le calcul\\
 de la conversion YCbCr vers RGB en Motion Jpeg\\~\\
 \large
-Frédéric Pétrot\\
+Frédéric Pétrot/Arthur Perais\\
 Durée~: 3 heures
 \end{center}
 
@@ -46,40 +46,64 @@ Le sujet est découpé en parties qui peuvent au départ être faites plus ou mo
 %Merci de m'envoyer votre fichier \texttt{conv.c} au plus tard lundi soir minuit, c'est là dessus que vous serez notés (ou pas, ...).
 
 \section{Introduction}
-Ce TP a pour objectif de mettre en pratique l'utilisation des opérations SIMD du processeur x86\_64.
+Ce TP a pour objectif de mettre en pratique l'utilisation des opérations SIMD du processeur x86\_64. Ces opérations ont été ajoutées au fil du temps via de nombreuses extensions aux jeux d'instruction.
+
 SIMD signifie \emph{Single Instruction, Multiple Data}, ce qui veut dire que la même opération va être exécutée sur $n$ données différentes (et indépendantes) simultanément.
 Un exemple simple est l'exécution d'une addition sur les 4 octets d'un mots de 32 bits considérés indépendamment.
 
 Nous utiliserons uniquement les extensions dites «~SSE~» (SSE, SSE2,SSE3, SSSE3, SSE4.1 et SSE4.2), sachant qu'il en existe de plus modernes (AVX, AVX2, AVX512) et de plus anciennes (MMX), ...
-Il y a 396 instructions SSEx (rien que ça), mais vous serez guidés pour sélectionner celles dont vous aurez l'usage.
+Il y a 396 instructions SSEx (rien que ça), mais vous serez -- un peu -- guidés pour sélectionner celles dont vous aurez l'usage.
 
 
-Les instructions SSE d'Intel travaillent sur des registres de 128 bits, qui peuvent contenir 2 doubles \lstinline{(double)}, 4 flottants \lstinline{(float)}, 4 entiers de 32 bits \lstinline{(int32_t)}, 8 entiers de 16 bits \lstinline{(int16_t)}, ou 16 entiers de 8 bits \lstinline{(int8_t)}.
+Les instructions SSE d'Intel travaillent sur des registres de 128 bits, qui peuvent contenir 2 doubles \lstinline{(double)}, 4 flottants \lstinline{(float)}, 4 entiers de 32 bits \lstinline{(int32_t)}, 8 entiers de 16 bits \lstinline{(int16_t)}, ou 16 entiers de 8 bits \lstinline{(int8_t)}. Dans le cas des entiers, certaines instructions interprètent les entiers comme des entiers signés, alors que d'autres les interprètent comme dans entiers non-signés. 
+	
 
 Afin de simplifier l'écriture du code dans du C, vous utiliserez les fonctions dites «~intrinsèques~» qui permettent d'utiliser des instructions assembleur plus simplement que l'\lstinline{inline asm}.
-\lstinline{Gcc} donne accès à ces fonctions en incluant le fichier \lstinline{x86intrin.h} (c'est fait dans les fichiers à trous que je vous fournis), et elles commencent toutes par \lstinline{__mm__}.
-\lstinline{Gcc} fournit également trois types~: \lstinline{__m128d} pour 2 doubles 64 bits, \lstinline{__m128} pour 4 flottants 32 bits, \lstinline{__m128i} pour tous les types entiers, donc c'est au programmeur de savoir ce qu'il contient en réalité.
+\lstinline{Gcc} donne accès à ces fonctions en incluant le fichier \lstinline{x86intrin.h} (c'est fait dans les fichiers à trous que je vous fournis), et elles commencent toutes par \lstinline{_mm_}.
+\lstinline{Gcc} fournit également trois types~: \lstinline{__m128d} pour 2 doubles 64 bits, \lstinline{__m128} pour 4 flottants 32 bits, \lstinline{__m128i} pour tous les types entiers, donc c'est au programmeur de savoir ce qu'il contient en réalité. De manière générale, on peut s'attarder sur le suffixe de chaque intrinsèque pour déterminer sur quelle type de donnée on opère : \\
+
+\begin{center}
+	\begin{tabular}{lll}
+		\multicolumn{1}{c}{Type} &
+		\multicolumn{1}{c}{INT} &
+		\multicolumn{1}{c}{FP} \\ \hline
+		SISD &
+		Scalaire entier = instructions classiques &
+		\begin{tabular}[c]{@{}l@{}}"Scalar Single Precision (1x32b)" (\textbf{\_ss}) \\ "Scalar Double Precision (1x64b)" \textbf{(\_sd})\end{tabular} \\
+		SIMD &
+		\begin{tabular}[c]{@{}l@{}}
+			"Packed Integer" (\textbf{\_epi8/16/32/64} ou \textbf{\_si}) \\ 
+			"Packed Unsigned Integer" \textbf{(\_epu8/16/32/64)} \end{tabular} &
+		\begin{tabular}[c]{@{}l@{}}"Packed Single Precision (4x32b)" (\textbf{\_ps})\\ "Packed Double Precision (2x64b)" (\textbf{\_pd})\end{tabular}
+	\end{tabular}
+\end{center} 
+
+\newpage
+
+En pratique, j'ai utilisé, pour l'implantation que j'ai réalisée, uniquement les types \lstinline{__m128} et \lstinline{__m128i} et les 9 fonctions intrinsèques suivantes~: \\
 
 
-En pratique, j'ai utilisé, pour l'implantation que j'ai réalisée, uniquement les types \lstinline{__m128} et \lstinline{__m128i} et les 9 fonctions intrinsèques suivantes~:\\
-\footnotesize
 \begin{tabular} {lll}
 \texttt{\_mm\_set\_ps1}       & \texttt{\_mm\_store\_si128}  & \texttt{\_mm\_unpacklo\_epi16}\\
 \texttt{\_mm\_unpacklo\_epi8} & \texttt{\_mm\_packus\_epi16} & \texttt{\_mm\_packus\_epi32}\\
 \texttt{\_mm\_cvtps\_epi32}   & \texttt{\_mm\_set1\_epi32}   & \texttt{\_mm\_setr\_ps}
 \end{tabular}
-\normalsize
 
-Le détail du comportement de ces instructions est disponible sur le site d'Intel à l'url suivante (indispensable de l'avoir ouverte pendant le TP~!):\\
-{\footnotesize\ttfamily \url{https://software.intel.com/sites/landingpage/IntrinsicsGuide/#expand&techs=SSE,SSE2,SSE3,SSSE3,SSE4_1,SSE4_2}}.
+\vspace{10pt}
+Il est cependant possible d'implémenter l'algorithme en utilisant d'autres instructions, la liste n'est donc ni exhaustive ni contraignante. Le détail du comportement de ces instructions est disponible sur le site d'Intel à l'url suivante (indispensable de l'avoir ouverte pendant le TP~!):\\
+{\footnotesize\ttfamily \url{https://software.intel.com/sites/landingpage/IntrinsicsGuide/#expand&techs=SSE,SSE2,SSE3,SSSE3,SSE4_1,SSE4_2}}. On se limitera cependant à SSE/SSSE, donc au SIMD 128-bit (pas d'AVX, sauf si vous voulez faire une version 256-bit après avoir fait la version 128-bit).
 
 Le TP utilise un décodeur vidéo Motion-JPEG (celui du projet C de 1ère année pour être précis), dans lequel nous allons tenter d'optimiser une fonction particulière, celle qui assure la conversion des composantes de luminance et chrominance en rouge, vert, bleu pour l'affichage d'une image dans un \emph{frame buffer}.
 
 \section{Travail demandé}
 
 \subsection{Préliminaires}
-Récupérez sur le site du cours (\lstinline{https://ensiwiki.ensimag.fr/images/d/d1/Tp2_src.tgz}) l'archive contenant les sources nécessaires au TP.
-Cette archive s'expanse dans le répertoire \verb+tp2_src/+, et contient une vidéo \verb+ice_age_256x144_444.mjpeg+ qui sera notre benchmark, un \verb+Makefile+, des fichiers objets contenant les différentes phases du décodage hormis la conversion YUV vers RGB, et des fichiers sources contenant diverses implantations (dont certaines partielles) de la conversion.
+
+On clonera le repo git à partir du gitlab (\lstinline{git clone  https://gitlab.ensimag.fr/petrotf/3a-archi.git}). Si vous comptez travailler sur votre machine, il conviendra probablement d'installer la librarie SDL afin d'afficher ce que l'on décode à l'écran. Sur Ubuntu : \\
+
+\lstinline{sudo apt install libsdl2-2.0-0 libsdl2-gfx-1.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-net-2.0-0 libsdl2-ttf-2.0-0 libsdl2-dev} \\
+
+On travaillera dans le répertoire \lstinline{3a-archi/TP/tp-simd/tp2_src_etd}, qui contient une vidéo \lstinline{Ice_age_256x144_444.mjpeg} qui sera notre benchmark, un \lstinline{Makefile}, des fichiers objets contenant les différentes phases du décodage hormis la conversion YUV vers RGB, et des fichiers sources contenant diverses implantations (dont certaines partielles) de la conversion.
 \begin{description}
 \item[\texttt{conv-float.c}]~\\
      la version initiale en virgule flottante~;
@@ -127,7 +151,9 @@ Plus fort, il existe des instructions qui font ces conversions en effectuant des
 \subsection*{Question 2}
 Ouvrez le fichier \lstinline[language=bash]{conv-sse-a-trou.c} et suivez les consignes qui s'y trouvent.
 La mauvaise nouvelle est qu'il n'est pas possible de changer par étapes successives le code, car les données sont dans des registres spéciaux avec des formats spéciaux, et que la conversion vers les formats du C n'est pas immédiate (\emph{c.f.} l'implantation de la fonction \lstinline{p128_x}).
-Donc soit gdb est votre ami (qui affiche les \lstinline{__mm128} selon toutes les configurations possibles), soit vous utilisez la fonction \lstinline{p128_x} qui permet d'afficher le contenu d'un registre (que vous pouvez comparer à ce que vous obtenez lorsque vous exécutez la version initiale, c'est ainsi que j'ai débuggé).
+Donc soit gdb est votre ami (qui affiche les \lstinline{__mm128} selon toutes les configurations possibles), soit vous utilisez la fonction \lstinline{p128_x} qui permet d'afficher le contenu d'un registre (que vous pouvez comparer à ce que vous obtenez lorsque vous exécutez la version initiale, c'est ainsi que j'ai débuggé). A noter : les variables sont données à titre indicatif et vous avez le droit de ne pas toute les utiliser ou d'en utiliser plus.
+
+Une dernière chose, la commande \lstinline{objdump -d executable | less} vous affichera les instructions du binaire (il suffit alors de chercher la bonne fonction). Utile si vous voulez voir ce que donne la traduction C vers assembleur avec instructions SSE.
 
 \subsection*{Question 3}
 Compilez votre version et les différentes versions fournies, décodez le film full patate, et faites un graphe du temps de décodage des différentes implantations.

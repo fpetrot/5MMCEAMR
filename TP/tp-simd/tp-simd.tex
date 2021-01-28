@@ -101,7 +101,7 @@ Le TP utilise un décodeur vidéo Motion-JPEG (celui du projet C de 1ère année
 
 On clonera le repo git à partir du gitlab (\lstinline{git clone  https://gitlab.ensimag.fr/petrotf/3a-archi.git}). Si vous comptez travailler sur votre machine, il conviendra probablement d'installer la librarie SDL afin d'afficher ce que l'on décode à l'écran. Sur Ubuntu : \\
 
-\lstinline{sudo apt install libsdl2-2.0-0 libsdl2-gfx-1.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-net-2.0-0 libsdl2-ttf-2.0-0 libsdl2-dev} \\
+\lstinline{sudo apt install libsdl2-2.0-0 libsdl2-gfx-1.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-net-2.0-0 libsdl2-ttf-2.0-0 libsdl2-dev libsdl1.2-dev} \\
 
 On travaillera dans le répertoire \lstinline{3a-archi/TP/tp-simd/tp2_src_etd}, qui contient une vidéo \lstinline{Ice_age_256x144_444.mjpeg} qui sera notre benchmark, un \lstinline{Makefile}, des fichiers objets contenant les différentes phases du décodage hormis la conversion YUV vers RGB, et des fichiers sources contenant diverses implantations (dont certaines partielles) de la conversion.
 \begin{description}

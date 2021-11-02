@@ -8,13 +8,15 @@
 \usepackage[scaled=0.83]{beramono}
 \usepackage{helvet}
 \usepackage{graphicx}
-\usepackage{amsmath,amssymb}
+\usepackage{amssymb}
 \usepackage[french]{babel}
 \usepackage{xspace}
 \usepackage{setspace}
 \usepackage{hyperref}
 \setstretch{1.0}
 \usepackage{subfigure}
+\usepackage[fleqn]{amsmath}
+\usepackage{listings}
 \voffset       -1in
 \hoffset       -1in
 \headheight     12pt
@@ -43,7 +45,7 @@ Le travail demandé TP fait l'objet d'un rendu contenant un court rapport qui in
 Un gabarit en \LaTeX\ qui reprend le predicteur BHT avec un compteur à saturation est donné en exemple.
 Vous avez également un script fourni pour vous permettre de systématiser les simulations et l'obtention des graphes des résultats.
 Ce script marche avec le prédicteur BHT qui a deux arguments, il est donc nécessaire de le modifier pour utiliser un prédicteur avec un nombre d'arguments différents.
-Le sous-répetoire \verb+sle3a/rendu+ contient un exemple de .tex permettant de faire un petit rapport sur le travail.
+Le sous-répetoire \verb+sle3a/rendu+ contient un exemple de .tex permettant de faire un petit rapport sur le travail. \textbf{Vous êtes invités à lire tous le sujet avant de commencer le TP.}
 
 \section{Introduction}
 On cherche à étudier le comportement en situation réelle de différents prédicteurs de branchement, du plus simple au plus complexe. Pour cela, on va développer un modèle en C++ de chacun de ces prédicteurs sur lequel on fera passer un ensemble de traces d'exécutions, nous permettant d'obtenir en sortie le ratio de mauvaises prédictions (en fait le nombre de \emph{Miss Prediction per Kilo Instructions}, MPKI). On fera varier les différents paramètres du prédicteur, en particulier la taille des tables, afin d'en extraire un comportement asymptotique (par benchmark), dont on tirera un graphe.
@@ -61,27 +63,25 @@ Dans une case donnée, un branchement «~prédit pris~» aura une valeur $v\geq 
       \label{2-bit}
 \end{figure}
 
-\section{Travail demandé -- Prédicteurs simples}
-On implantera différents prédicteurs en prenant soin de paramétrer les tailles afin de pouvoir lancer facilement plusieurs exécutions (\emph{cf.} l'exemple fourni) et ainsi pouvoir tracer des courbes et voir les asymptotes. \textbf{Important :} Les figures montrent souvent des prédicteurs de petites tailles, mais vous êtes invités à considérer des prédicteurs commençant au moins à 128 entrées (log2(128) = 7).
-
-Les prédicteurs que vous devrez implanter sont les suivants~:
-\begin{enumerate}
-\item un prédicteur global simple, montré en Figure \ref{global-simple} avec un historique global de branchement de longueur (nombre de bits) $H$ permettant d'atteindre une entrée bimodale contenant un compteur 2-bit utilisant le graphe d'état donné en Figure \ref{bimod}. Dans le cas du prédicteur global simple, la structure contenant les prédictions est appelée \textit{Pattern History Table} (comme le premier niveau du 2-level adaptive).
-
-      \begin{figure}[hbt]\center\leavevmode
-	\includegraphics[scale=1]{global-simple}
-	\caption{Prédicteur global simple}
-	\label{global-simple}
-\end{figure}
-
-
 \begin{figure}[htb]
 	\center\includegraphics[scale=0.7]{./figures/2bg1.pdf}
 	\caption{Automate d'un compteur 2-bit bimodal}
 	\label{bimod}
 \end{figure}
 
-   L'historique global des branchements est un registre à décalage à gauche dans lequel on injecte sur le poids faible la décision prise ($H=3$ dans la figure~\ref{global-simple}).
+\section{Travail demandé} 
+On implantera différents prédicteurs en prenant soin de paramétrer les tailles afin de pouvoir lancer facilement plusieurs exécutions (\emph{cf.} l'exemple fourni) et ainsi pouvoir tracer des courbes et voir les asymptotes. \textbf{Important :} Les figures montrent souvent des prédicteurs de petites tailles, mais vous êtes invités à considérer des prédicteurs commençant au moins à 128 entrées (log2(128) = 7). Lors de l'évaluation de chaque prédicteur, vous êtes invités à analyser son comportement en isolation (e.g.,~un prédicteur de plus grande taille est-il toujours meilleur ?) mais aussi à le comparer aux autres types de prédicteurs (e.g.,~deux prédicteurs aux performances égales mais l'un requiert beaucoup plus d'entrées que l'autre).
+
+\subsection{Prédicteurs simples}
+
+On commencera par les prédicteurs relativement simples vus en cours~:
+
+
+
+
+\begin{enumerate}
+
+%   L'historique global des branchements est un registre à décalage à gauche dans lequel on injecte sur le poids faible la décision prise ($H=3$ dans la figure~\ref{global-simple}).
 
 %\item un prédicteur \emph{gshare} qui est un prédicteur global pour lequel l'index définissant l'entrée dans la table de taille $2^n$ est calculé comme le ou-exclusif d'un registre d'historique avec le pc du branchement, comme illustré sur la figure~\ref{gshare};
 %      \begin{figure}[hbt]\center\leavevmode
@@ -91,7 +91,7 @@ Les prédicteurs que vous devrez implanter sont les suivants~:
 %      \end{figure}
 %      Si $H>n$, alors on prendra les $n$ bits de poids fort de $H$ pour faire le ou-exclusif;
 
-\item un prédicteur \textit{gshare} qui utilise un historique global sur $H$ bits qui est combiné à l'adresse du branchement à prédire via un XOR, comme illustré sur la Figure~\ref{correlated}. On pourra tenter de trouver une fonction de hachage plus performante qu'un simple XOR;
+\item un prédicteur \textit{gshare} qui utilise un historique global sur $H$ bits qui est combiné à l'adresse du branchement à prédire via un XOR, comme illustré sur la Figure~\ref{correlated}. 
       \begin{figure}[hbt]\center\leavevmode
       \includegraphics[scale=.9]{./figures/gshare.pdf}
       \caption{\label{correlated}Prédicteur gshare}
@@ -104,19 +104,86 @@ Les prédicteurs que vous devrez implanter sont les suivants~:
       \label{local}
       \end{figure}
 
-\item une combinaison de deux prédicteurs et le métaprédicteur associé (celui de l'alpha 21264) qui utilise un prédicteur global simple (pas gshare!) avec un historique de $H_g=12$ (soit 4096 entrées), et un prédicteur local comme celui de la précédente question, avec $H_l=10$ par entrée de la PHT (soit 1024 entrées).
-La BHT indexée est un simple prédicteur bimodal, mais qui utilise des compteurs \textbf{3 bits}.
+\item une combinaison de deux prédicteurs et le métaprédicteur associé. On va ici combiner un prédicteur global \textit{gshare} avec un historique de $H_g=10$ (soit 1024 entrées), et un prédicteur \textit{2-level} local comme celui de la précédente question, avec $H_l=10$ par entrée de la PHT (soit 1024 entrées pour la BHT, 1024 entrées pour la PHT).
+La BHT indexée est un simple prédicteur bimodal.
 
-Le choix du prédicteur à utiliser se fait grâce au métaprédicteur qui comme les BHT des prédicteurs global et local contient 4K entrées de compteurs 2 bits. On accède au compteur en utilisant l'adresse du branchement à prédire, et ce compteur nous dit simplement quel prédicteur du prédicteur global ou du prédicteur local va effectuer la prédiction. Le compteur est incrémenté lorsque le prédicteur \emph{prédit} est correcte et l'autre prédicteur a fait le mauvais choix, et est décrémenté dans le cas opposé (\emph{cf.} la machine d'état de la figure~\ref{mixte-graphe}).
+Le choix du prédicteur à utiliser se fait grâce au métaprédicteur qui, comme les BHT des "vrais" prédicteurs, contient 1024 entrées de compteurs 2 bits. On accède au compteur en utilisant l'adresse du branchement à prédire, et ce compteur nous dit simplement quel prédicteur du prédicteur global ou du prédicteur local va effectuer la prédiction. Le compteur est incrémenté lorsque le prédicteur qui a prédit est correct et l'autre prédicteur a fait le mauvais choix, et est décrémenté dans le cas opposé (\emph{cf.} la machine d'état de la figure~\ref{mixte-graphe}). Il n'est pas nécessaire de rendre le prédicteur paramétrable. \textit{Ici, on ajoutera des statistiques afin de compter les bonnes et mauvaises prédictions de chaque prédicteur respectif, ainsi que le nombre de prédictions effectivement utilisées (i.e.,~sélectionnées par le métaprédicteur) de chaque prédicteur}.
+
+
+
 \begin{figure}[hbt]\center\leavevmode
       \includegraphics[scale=0.7]{./figures/mixte-graphe.pdf}
       \caption{Machine à états du choix du prédicteur.
       Légende~: $global/local$, $0$ décision incorrecte, $1$ décision correcte}
       \label{mixte-graphe}
       \end{figure}
-
-      On ne tentera pas (du moins dans le temps imparti) de faire une version paramétrable de ce dernier prédicteur.
 \end{enumerate}
+
+
+\subsection{Perceptron}
+
+On se propose ensuite d'implémenter un prédicteur moderne tel que le prédicteur neural à base de perceptrons de Jiménez et Lin\footnote{\href{https://www.cs.cmu.edu/afs/cs/academic/class/15740-f18/www/papers/hpca01-jiminez-perceptron.pdf}{Lien vers "Dynamic Branch Prediction with Perceptrons".}}, et en comparer la performance avec les prédicteurs de la première partie. \\
+
+Ce prédicteur utilise la version la plus simple des réseaux de neurones appelés perceptrons, puisqu'il n'utilise qu'une seule couche de neurones. Un perceptron "apprend" une fonction booléenne à $n$ entrée, et dans le cas du prédicteur de Jiménez et Lin, ces $n$ entrées correspondent aux bits de l'historique global de branchement (le même que dans \textit{gshare}). La sortie étant la direction prédite pour le branchement. Le modèle mathématique utilisé pour un tel perceptron est donné dans la Figure \ref{1perceptron}. Dans la Figure, $y$ dénote un vecteur de poids $w\_i$ (entiers signés), et le calcul effectué par le perceptron est le produit scalaire des entrées avec le vecteur de poids. Dans ce modèle, on ajoute une entrée $x\_0$ valant toujours 1 pour biaiser le résultat. Dans ce modèle, la valeur des entrées $x_i$ est soit $-1$ (branchement non pris) soit $1$ (branchement pris). Un résultat de la somme négatif est interprété comme la prédiction "non-pris", et un résultat positif est interprété comme la prédiction "pris".
+
+\begin{figure}[hbt]\center\leavevmode
+	\includegraphics[width=0.5\linewidth]{1perceptron}
+	\caption{Perceptron}
+	\label{1perceptron}
+\end{figure}
+
+      \begin{figure}[hbt]\center\leavevmode
+	\includegraphics[width=0.5\linewidth]{perceptron}
+	\caption{Prédicteur neural à base de perceptrons}
+	\label{perceptron}
+\end{figure}
+
+Le diagramme du prédicteur, emprunté au papier de Jiménez et Lin est donné en Figure \ref{perceptron}. Afin de prédire la direction d'un branchement conditionnel, un tableau de perceptrons est indexé via l'adresse du branchement à prédire. Chaque entrée de la structure modélise un perceptron tel que décrit dans le paragraphe précédent. Pour générer la prédiction, le prédicteur va donc effectuer le produit scalaire du vecteur de poids (le perceptron) et le contenu du GHR (sans oublier le biais!) \\
+
+Une fois la direction réelle du branchement obtenu, il convient de mettre à jour le prédicteurs. Ici, cela revient à mettre à jours les poids du vecteur de poids du perceptron utilisé pour prédire. On utilisera l'algorithme suivant~:
+
+\begin{equation*}
+\text{Soit~} t = -1 \text{~si le branchement est non-pris, 1 sinon}
+\end{equation*}
+
+\vspace*{-20px}
+
+\begin{equation*}
+\text{Soit~} \theta \text{~le \textit{seuil}, un paramètre de l'algorithme de mise à jour}
+\end{equation*}
+
+\vspace*{-20px}
+
+\begin{equation*}
+\text{Soit~} y_{out}=\left\{
+\begin{array}{@{}ll@{}}
+1, & \text{si~} y > \theta \\
+0, & \text{si~} -\theta \leq y \leq \theta \\
+-1, & \text{si~} y < \theta
+\end{array}\right.
+\end{equation*} 
+
+\begin{equation*}
+\begin{array}{@{}ll@{}}
+\text{si~}y_{out} \neq t \text{~alors:} \\
+  \text{~~~~pour $i := 0$ à $n$, faire}: \\
+    \text{~~~~~~~~} w_i := w_i + t.x_i \\
+  \text{~~~~finpour} \\
+\text{finsi}
+\end{array}
+\end{equation*}
+
+L'article de Jiménez et Lin suggère d'utiliser un historique global de branchement entre 12 et 62 bits suivant le budget matériel (en KB), des poids de 7 à 9 bits, mais ne donne pas de valeur pour $\theta$.
+
+Dans le cadre de ce TP, on se limitera à un historique global de même taille que pour gshare, avec un nombre de perceptrons similaires, et on s'attachera à comparer la performance des deux prédicteurs, car il s'agit de deux prédicteurs à corrélation globale. Avant d'effectuer cette analyse, il conviendra cependant de trouver un $\theta$ donnant de bonnes performances, et éventuellement de donner une intuition sur pourquoi. 
+
+
+
+\subsection{Aller plus loin}
+
+L'idée de cette dernière partie est de choisir un des prédicteurs implémentés dans les parties précédentes et de chercher à minimiser les MPKI par tous les moyens possibles : taille des tables, fonction de hachage, associativité, combinaisons de prédicteurs, type d'historique (dans la mesure de ce que permet le simulateur), tout est permis. Ici, on vous encourage à analyser les traces, par exemple en construisant des statistiques sur chaque branchement dans la fonction \textit{UpdatePredictor()}, afin de tenter de déterminer pourquoi un branchement est mal prédit alors qu'il a l'air régulier ou corrélé à un voisin. Dans votre rapport, il conviendra d'expliquer les techniques utilisées et vos analyses quand à ce qui fonctionne le mieux.
+
+\section{Infrastructure}
 
 Il y a un script \verb+sle3a-doit.sh+ dans le répertoire \verb+script+ qui lance automatiquement l'exécution sur un sous-ensemble des traces pour un prédicteur donné, qu'il a fallut préalablement compiler dans le répertoire \verb+sim+.
 Il y a dans le script pour le prédicteur $n$-modal 2 boucles imbriquées~: la boucle externe, indice $i$, fait varier le nombre de bits du compteur, et la boucle interne, d'indice $j$, fait varier le nombre de bits de PC à utiliser pour indexer les tables.
@@ -156,14 +223,5 @@ On donne sur la figure~\ref{results} le type de résultat attendu pour le prédi
       \caption{\label{results}Les courbes de MPKI pour le prédicteur bimodal simple, en fonction du nombre de bits par compteur et du nombre d'entrées.}
       \end{figure}
 
-\clearpage
-\section{Travail demandé -- Aller plus loin}
-
-La deuxième partie de ce TP est plus propective, car il s'agit d'améliorer la performance des prédicteurs simples implémentés jusqu'ici. On se propose de suivre deux chemins possibles. \\
-
-\begin{enumerate}
-	\item Choisir un des prédicteurs de la première partie et chercher à minimiser les MPKI par tous les moyens possibles : taille des tables, fonction de hachage, associativité, combinaisons de prédicteurs, type d'historique (dans la mesure de ce que permet le simulateur), tout est permis. Ici, on vous encourage à analyser les traces, par exemple en construisant des statistiques sur chaque branchement dans la fonction \textit{UpdatePredictor()}, afin de tenter de déterminer pourquoi un branchement est mal prédit alors qu'il a l'air régulier ou corrélé à un voisin. Dans votre rapport, il conviendra d'expliquer les techniques utilisées et vos analyses quand à ce qui fonctionne le mieux.
-	\item Implémenter un prédicteur moderne tel que le prédicteur neural à base de perceptrons de Jiménez et Lin, à partir du papier de recherche éponyme (\href{https://www.cs.cmu.edu/afs/cs/academic/class/15740-f18/www/papers/hpca01-jiminez-perceptron.pdf}{Lien}, et en comparer la performance avec les prédicteurs de la première partie. A noter que pour implémenter le prédicteur, il n'est pas nécessaire de lire tout le papier de recherche. La Figure 3 ainsi que les Sections 3.2, 3.3, 3.5 et 4 sont suffisantes. Dans votre rapport, il conviendra de décrire votre implémentation afin que l'on puisse s'assurer que vous avez bien compris le papier.
-\end{enumerate}
 
 \end{document}

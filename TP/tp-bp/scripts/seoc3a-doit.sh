@@ -7,8 +7,8 @@
 num_parallel_jobs=4
 
 # Paramètres que l'on cherche à faire varier
-count_sizes=($(seq 1 6))
-array_sizes=(7 8 9 10 11 16)
+count_sizes=($(seq 1 2))
+array_sizes=(7 10)
 
 if test 1 -ne 0 ; then
    # Nombre de bits du compteur
@@ -70,6 +70,6 @@ for i in ${count_sizes[*]} ; do
    echo "plt.subplot().set_yscale('log', nonposy='clip')"             >> plot_$i.py
    echo "plt.legend(loc='upper right')"                               >> plot_$i.py
    echo "f.savefig('"graph_$i.pdf"', bbox_inches='tight')"                >> plot_$i.py
-   python plot_$i.py
+   python3.9 plot_$i.py
    rm plot_$i.py
 done

@@ -23,7 +23,7 @@
 
 # Include path to Boost area on local machine
 #
-export BOOST    := /usr/
+export BOOST    := /usr/lib64
 
 ifndef BOOST
 $(error "You must define BOOST")
@@ -37,13 +37,13 @@ OBJDIR := $(CBP_BASE)/bin
 SRC    := $(CBP_BASE)/sim
 VPATH  := $(SRC)
 
-LDLIBS   += -l:libboost_iostreams.so.1.53.0
+LDLIBS   += -lboost_iostreams
 
-LDFLAGS += -L/usr/lib64
+LDFLAGS += -L$(BOOST)
 
 CPPFLAGS := -DPC_BITS=$(PC_BITS) -DENTRY_BITS=$(ENTRY_BITS) -O3 -Wall -std=c++11 -Wextra -Winline -Winit-self -Wno-sequence-point -Wno-unused-parameter\
            -Wno-unused-function -Wno-inline -fPIC -W -Wcast-qual -Wpointer-arith -Woverloaded-virtual\
-           -I$(CBP_BASE) -I/usr/include -I../include
+           -I$(CBP_BASE) -I/usr/include
 
 PROGRAMS := predictor
 

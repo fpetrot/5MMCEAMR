@@ -9,19 +9,19 @@ all :
 	@gawk -F : '/^mjpeg/{print "make", $$1}' Makefile
 
 mjpeg-float : conv-float.o $(OBJS)
-	gcc -no-pie -Bstatic -o $@ $^ -lSDL
+	gcc -Bstatic -o $@ $^ -lSDL
 
 mjpeg-int : conv-int.o $(OBJS)
-	gcc -no-pie -Bstatic -o $@ $^ -lSDL
+	gcc -Bstatic -o $@ $^ -lSDL
 
 mjpeg-mmx : conv-mmx.o $(OBJS)
-	gcc -no-pie $(CFLAGS) -Bstatic -o $@ $^ -lSDL
+	gcc $(CFLAGS) -Bstatic -o $@ $^ -lSDL
 
 mjpeg-conv-unrolled4-float-a-trou : conv-unrolled4-float-a-trou.o $(OBJS)
-	gcc -no-pie $(CFLAGS) -Bstatic -o $@ $^ -lSDL
+	gcc  $(CFLAGS) -Bstatic -o $@ $^ -lSDL
 
 mjpeg-conv-sse-a-trou : conv-sse-a-trou.c $(OBJS)
-	gcc -no-pie $(CFLAGS) -Bstatic -o $@ $^ -lSDL
+	gcc  $(CFLAGS) -Bstatic -o $@ $^ -lSDL
 
 realclean : clean
 	rm -f mjpeg-float mjpeg-int mjpeg-mmx mjpeg-unrolled4-float-a-trou mjpeg-conv-sse-a-trou

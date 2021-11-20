@@ -37,11 +37,11 @@ Implantations et évaluations de\\
 quelques prédicteurs de branchements\\
 \large
 
-Durée~: 4 heures
+Durée~: 3 heures
 \end{center}
 \section{Organisation}
 Ce TP se fait soit seul, soit en binôme, à votre convenance.
-Le travail demandé TP fait l'objet d'un rendu contenant un court rapport qui inclut les \emph{résultats} d'expérimentations et un \emph{tarball} (ou un git) contenant vos sources à fournir en fin de séance.
+Vous êtes fortement encourages à fournir un court rapport qui inclut les \emph{résultats} d'expérimentations et un \emph{tarball} (ou un git) contenant vos sources en fin de séance, si vous souhaitez des retours.
 Un gabarit en \LaTeX\ qui reprend le predicteur BHT avec un compteur à saturation est donné en exemple.
 Vous avez également un script fourni pour vous permettre de systématiser les simulations et l'obtention des graphes des résultats.
 Ce script marche avec le prédicteur BHT qui a deux arguments, il est donc nécessaire de le modifier pour utiliser un prédicteur avec un nombre d'arguments différents.
@@ -124,7 +124,7 @@ Le choix du prédicteur à utiliser se fait grâce au métaprédicteur qui, comm
 
 On se propose ensuite d'implémenter un prédicteur moderne tel que le prédicteur neural à base de perceptrons de Jiménez et Lin\footnote{\href{https://www.cs.cmu.edu/afs/cs/academic/class/15740-f18/www/papers/hpca01-jiminez-perceptron.pdf}{Lien vers "Dynamic Branch Prediction with Perceptrons".}}, et en comparer la performance avec les prédicteurs de la première partie. \\
 
-Ce prédicteur utilise la version la plus simple des réseaux de neurones appelés perceptrons, puisqu'il n'utilise qu'une seule couche de neurones. Un perceptron "apprend" une fonction booléenne à $n$ entrée, et dans le cas du prédicteur de Jiménez et Lin, ces $n$ entrées correspondent aux bits de l'historique global de branchement (le même que dans \textit{gshare}). La sortie étant la direction prédite pour le branchement. Le modèle mathématique utilisé pour un tel perceptron est donné dans la Figure \ref{1perceptron}. Dans la Figure, $y$ dénote un vecteur de poids $w\_i$ (entiers signés), et le calcul effectué par le perceptron est le produit scalaire des entrées avec le vecteur de poids. Dans ce modèle, on ajoute une entrée $x\_0$ valant toujours 1 pour biaiser le résultat. Dans ce modèle, la valeur des entrées $x_i$ est soit $-1$ (branchement non pris) soit $1$ (branchement pris). Un résultat de la somme négatif est interprété comme la prédiction "non-pris", et un résultat positif est interprété comme la prédiction "pris".
+Ce prédicteur utilise la version la plus simple des réseaux de neurones appelés perceptrons, puisqu'il n'utilise qu'une seule couche de neurones. Un perceptron "apprend" une fonction booléenne à $n$ entrée, et dans le cas du prédicteur de Jiménez et Lin, ces $n$ entrées correspondent aux bits de l'historique global de branchement (le même que dans \textit{gshare}). La sortie étant la direction prédite pour le branchement. Le modèle mathématique utilisé pour un tel perceptron est donné dans la Figure \ref{1perceptron}. Dans la Figure, $y$ dénote un vecteur de poids $w_i$ (entiers signés), et le calcul effectué par le perceptron est le produit scalaire des entrées avec le vecteur de poids. Dans ce modèle, on ajoute une entrée $x_0$ valant toujours 1 pour biaiser le résultat. Dans ce modèle, la valeur des entrées $x_i$ est soit $-1$ (branchement non pris) soit $1$ (branchement pris). Un résultat de la somme négatif est interprété comme la prédiction "non-pris", et un résultat positif est interprété comme la prédiction "pris".
 
 \begin{figure}[hbt]\center\leavevmode
 	\includegraphics[width=0.5\linewidth]{1perceptron}
@@ -140,7 +140,7 @@ Ce prédicteur utilise la version la plus simple des réseaux de neurones appel�
 
 Le diagramme du prédicteur, emprunté au papier de Jiménez et Lin est donné en Figure \ref{perceptron}. Afin de prédire la direction d'un branchement conditionnel, un tableau de perceptrons est indexé via l'adresse du branchement à prédire. Chaque entrée de la structure modélise un perceptron tel que décrit dans le paragraphe précédent. Pour générer la prédiction, le prédicteur va donc effectuer le produit scalaire du vecteur de poids (le perceptron) et le contenu du GHR (sans oublier le biais!) \\
 
-Une fois la direction réelle du branchement obtenu, il convient de mettre à jour le prédicteurs. Ici, cela revient à mettre à jours les poids du vecteur de poids du perceptron utilisé pour prédire. On utilisera l'algorithme suivant~:
+Une fois la direction réelle du branchement obtenu, il convient de mettre à jour le prédicteur. Ici, cela revient à mettre à jour les poids du vecteur de poids du perceptron utilisé pour prédire. On utilisera l'algorithme suivant~:
 
 \begin{equation*}
 \text{Soit~} t = -1 \text{~si le branchement est non-pris, 1 sinon}

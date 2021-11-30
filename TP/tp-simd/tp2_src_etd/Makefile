@@ -24,6 +24,6 @@ mjpeg-conv-sse-a-trou : conv-sse-a-trou.c $(OBJS)
 	gcc  $(CFLAGS) -Bstatic -o $@ $^ -lSDL
 
 realclean : clean
-	rm -f mjpeg-float mjpeg-int mjpeg-mmx mjpeg-unrolled4-float-a-trou mjpeg-conv-sse-a-trou
+	rm -f mjpeg-float mjpeg-int mjpeg-mmx mjpeg-conv-unrolled4-float-a-trou mjpeg-conv-sse-a-trou
 clean :
 	rm -f conv-float.o conv-int.o conv-unrolled4-float-a-trou.o conv-sse-a-trou.o

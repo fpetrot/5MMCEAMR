@@ -1,0 +1,12 @@
+  #!/bin/bash
+  perf stat \
+  -e cpu-cycles \
+  -e instructions \
+  -e L1-icache-load-misses \
+  -e L1-dcache-loads \
+  -e L1-dcache-load-misses \
+  -e L1-dcache-stores \
+  -e LLC-load-misses \
+  -e LLC-loads \
+  -e LLC-store-misses \
+  -e LLC-stores $1

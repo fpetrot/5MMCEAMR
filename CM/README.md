@@ -2,7 +2,7 @@
 
 ## CM n°0 et 1
 
-###Introduction sur les caches
+### Introduction sur les caches
 
 Programme qui met en évidence le comportement du cache:
 ```C
@@ -29,3 +29,5 @@ Principe du cache et emplacements possibles des lignes de mémoire: ![Photo du t
 
 Design d'un cache à correspondance directe: ![Photo du tableau](20220926_112042.jpg)
 Design d'un cache associatif par ensemble, avec 128 ensembles de 2 voies chacun: ![Photos du tableau](20220926_112048.jpg)
+
+Ajout du remarquable travail de Master de Damien Gille (qui travaille chez ArianeEspace après être passé chez ARM) sur les politiques de remplacement dans les caches.

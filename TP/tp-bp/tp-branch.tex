@@ -5,7 +5,7 @@
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{libertine}
-\usepackage[scaled=0.83]{beramono}
+%\usepackage[scaled=0.83]{beramono}
 \usepackage{helvet}
 \usepackage{graphicx}
 \usepackage{amssymb}
@@ -45,7 +45,7 @@ Vous êtes fortement encourages à fournir un court rapport qui inclut les \emph
 Un gabarit en \LaTeX\ qui reprend le predicteur BHT avec un compteur à saturation est donné en exemple.
 Vous avez également un script fourni pour vous permettre de systématiser les simulations et l'obtention des graphes des résultats.
 Ce script marche avec le prédicteur BHT qui a deux arguments, il est donc nécessaire de le modifier pour utiliser un prédicteur avec un nombre d'arguments différents.
-Le sous-répetoire \verb+sle3a/rendu+ contient un exemple de .tex permettant de faire un petit rapport sur le travail. \textbf{Vous êtes invités à lire tous le sujet avant de commencer le TP.}
+Le sous-répetoire \verb+todo/rendu+ contient un exemple de .tex permettant de faire un petit rapport sur le travail. \textbf{Vous êtes invités à lire tout le sujet avant de commencer le TP.}
 
 \section{Introduction}
 On cherche à étudier le comportement en situation réelle de différents prédicteurs de branchement, du plus simple au plus complexe. Pour cela, on va développer un modèle en C++ de chacun de ces prédicteurs sur lequel on fera passer un ensemble de traces d'exécutions, nous permettant d'obtenir en sortie le ratio de mauvaises prédictions (en fait le nombre de \emph{Miss Prediction per Kilo Instructions}, MPKI). On fera varier les différents paramètres du prédicteur, en particulier la taille des tables, afin d'en extraire un comportement asymptotique (par benchmark), dont on tirera un graphe.

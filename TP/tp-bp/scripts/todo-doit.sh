@@ -7,15 +7,15 @@
 num_parallel_jobs=4
 
 # Paramètres que l'on cherche à faire varier
-count_sizes=($(seq 1 2))
-array_sizes=(7 10)
+count_sizes=($(seq 1 1))
+array_sizes=(7 7)
 
 if test 1 -ne 0 ; then
    # Nombre de bits du compteur
    for i in ${count_sizes[*]} ; do
       # Taille du tableau
       for j in ${array_sizes[*]} ; do
-         ./runall.pl -s ../sim/predictor -w seoc -f  $num_parallel_jobs -d ../results/${i}-${j} -p $j $i
+         ./runall.pl -s ../sim/predictor -w isi2022 -f  $num_parallel_jobs -d ../results/${i}-${j} -p $j $i
       done
    done
 fi
@@ -31,7 +31,7 @@ rm -f 1
 
 for i in ${count_sizes[*]} ; do
    for j in ${array_sizes[*]} ; do
-      ./getdata.pl -w seoc -d ../results/${i}-${j} >> ${tmpfile}_$i
+      ./getdata.pl -w isi2022 -d ../results/${i}-${j} >> ${tmpfile}_$i
    done
 done
 
@@ -54,8 +54,8 @@ for i in ${count_sizes[*]} ; do
    cat $t                                                             >> plot_$i.py
    rm $t
    echo "f = plt.figure()"                                            >> plot_$i.py
-   echo "plt.xlabel('log2(table size)')"                              >> plot_$i.py
-   echo "plt.ylabel('miss prediction per k instructions')"            >> plot_$i.py
+   echo "plt.xlabel(r'$\log_2\$(table size)')"                        >> plot_$i.py
+   echo "plt.ylabel('Miss predictions per K instructions')"           >> plot_$i.py
    echo "i = 0"                                                       >> plot_$i.py
    echo "colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']"                >> plot_$i.py
    echo "marks  = ['p', 'o', '*', 'h', 'H', '8', '^', 'v', 's']"      >> plot_$i.py
@@ -67,9 +67,9 @@ for i in ${count_sizes[*]} ; do
    done
    echo "plt.title('counter size" $i"')"                              >> plot_$i.py
    echo "plt.legend(loc='upper right')"                               >> plot_$i.py
-   echo "plt.subplot().set_yscale('log', nonposy='clip')"             >> plot_$i.py
+   echo "plt.subplot().set_yscale('log', nonpositive='clip')"         >> plot_$i.py
    echo "plt.legend(loc='upper right')"                               >> plot_$i.py
-   echo "f.savefig('"graph_$i.pdf"', bbox_inches='tight')"                >> plot_$i.py
-   python3.9 plot_$i.py
+   echo "f.savefig('"graph_$i.pdf"', bbox_inches='tight')"            >> plot_$i.py
+   python3 plot_$i.py
    rm plot_$i.py
 done

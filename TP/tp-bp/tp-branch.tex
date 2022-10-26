@@ -48,7 +48,7 @@ Ce script marche avec le prédicteur BHT qui a deux arguments, il est donc néce
 Le sous-répetoire \verb+todo/rendu+ contient un exemple de .tex permettant de faire un petit rapport sur le travail. \textbf{Vous êtes invités à lire tout le sujet avant de commencer le TP.}
 
 \section{Introduction}
-On cherche à étudier le comportement en situation réelle de différents prédicteurs de branchement, du plus simple au plus complexe. Pour cela, on va développer un modèle en C++ de chacun de ces prédicteurs sur lequel on fera passer un ensemble de traces d'exécutions, nous permettant d'obtenir en sortie le ratio de mauvaises prédictions (en fait le nombre de \emph{Miss Prediction per Kilo Instructions}, MPKI). On fera varier les différents paramètres du prédicteur, en particulier la taille des tables, afin d'en extraire un comportement asymptotique (par benchmark), dont on tirera un graphe.
+On cherche à étudier le comportement en situation réelle de différents prédicteurs de branchement, du plus simple au plus complexe. Pour cela, on va développer un modèle en C++ de chacun de ces prédicteurs sur lequel on fera passer un ensemble de traces d'exécutions, nous permettant d'obtenir en sortie le ratio de mauvaises prédictions (en fait le nombre de \emph{Miss Predictions per Kilo Instructions}, MPKI). On fera varier les différents paramètres du prédicteur, en particulier la taille des tables, afin d'en extraire un comportement asymptotique (par benchmark), dont on tirera un graphe.
 
 L'infrastructure dans laquelle insérer le modèle de prédicteur est celle qui a été utilisée par le \emph{The 5th JILP Championship Branch Prediction Competition (CBP-5)}\footnote{Dont on trouvera la version originale sur \texttt{https://www.jilp.org/cbp2016/framework.html}}.
 Cette infrastructure effectue la lecture des traces et l'appel à des fonctions qui implantent le prédicteur, et donne en sortie diverses statistiques dont les MPKI.
@@ -107,14 +107,14 @@ On commencera par les prédicteurs relativement simples vus en cours~:
 \item une combinaison de deux prédicteurs et le métaprédicteur associé. On va ici combiner un prédicteur global \textit{gshare} avec un historique de $H_g=10$ (soit 1024 entrées), et un prédicteur \textit{2-level} local comme celui de la précédente question, avec $H_l=10$ par entrée de la PHT (soit 1024 entrées pour la BHT, 1024 entrées pour la PHT).
 La BHT indexée est un simple prédicteur bimodal.
 
-Le choix du prédicteur à utiliser se fait grâce au métaprédicteur qui, comme les BHT des "vrais" prédicteurs, contient 1024 entrées de compteurs 2 bits. On accède au compteur en utilisant l'adresse du branchement à prédire, et ce compteur nous dit simplement quel prédicteur du prédicteur global ou du prédicteur local va effectuer la prédiction. Le compteur est incrémenté lorsque le prédicteur qui a prédit est correct et l'autre prédicteur a fait le mauvais choix, et est décrémenté dans le cas opposé (\emph{cf.} la machine d'état de la figure~\ref{mixte-graphe}). Il n'est pas nécessaire de rendre le prédicteur paramétrable. \textit{Ici, on ajoutera des statistiques afin de compter les bonnes et mauvaises prédictions de chaque prédicteur respectif, ainsi que le nombre de prédictions effectivement utilisées (i.e.,~sélectionnées par le métaprédicteur) de chaque prédicteur}.
+Le choix du prédicteur à utiliser se fait grâce au métaprédicteur qui, comme les BHT des «~vrais~» prédicteurs, contient 1024 entrées de compteurs 2 bits. On accède au compteur en utilisant l'adresse du branchement à prédire, et ce compteur nous dit simplement quel prédicteur du prédicteur global ou du prédicteur local va effectuer la prédiction. Le compteur est incrémenté lorsque le prédicteur qui a prédit est correct et l'autre prédicteur a fait le mauvais choix, et est décrémenté dans le cas opposé (\emph{cf.} la machine d'état de la figure~\ref{mixte-graphe}). Il n'est pas nécessaire de rendre le prédicteur paramétrable. \textit{Ici, on ajoutera des statistiques afin de compter les bonnes et mauvaises prédictions de chaque prédicteur respectif, ainsi que le nombre de prédictions effectivement utilisées (i.e.,~sélectionnées par le métaprédicteur) de chaque prédicteur}.
 
 
 
 \begin{figure}[hbt]\center\leavevmode
       \includegraphics[scale=0.7]{./figures/mixte-graphe.pdf}
       \caption{Machine à états du choix du prédicteur.
-      Légende~: $global/local$, $0$ décision incorrecte, $1$ décision correcte}
+      Légende~: \emph{global}/\emph{local}. Par prédicteur: $0$ décision incorrecte, $1$ décision correcte}
       \label{mixte-graphe}
       \end{figure}
 \end{enumerate}
@@ -185,11 +185,11 @@ L'idée de cette dernière partie est de choisir un des prédicteurs implément�
 
 \section{Infrastructure}
 
-Il y a un script \verb+sle3a-doit.sh+ dans le répertoire \verb+script+ qui lance automatiquement l'exécution sur un sous-ensemble des traces pour un prédicteur donné, qu'il a fallut préalablement compiler dans le répertoire \verb+sim+.
+Il y a un script \verb+todo-doit.sh+ dans le répertoire \verb+script+ qui lance automatiquement l'exécution sur un sous-ensemble des traces pour un prédicteur donné, qu'il a fallut préalablement compiler dans le répertoire \verb+sim+.
 Il y a dans le script pour le prédicteur $n$-modal 2 boucles imbriquées~: la boucle externe, indice $i$, fait varier le nombre de bits du compteur, et la boucle interne, d'indice $j$, fait varier le nombre de bits de PC à utiliser pour indexer les tables.
 Vous serez amené à modifier les valeurs des bornes en fonction des prédicteurs, voir à changer un peu cette partie si vous faites des prédicteurs exotiques.
 
-Le script \verb+sle3a-doit.sh+ produit ses résultats dans \verb+../results/xxx+, ou \verb+xxx+ est un répertoire dont le nom peut-être choisi à l'envie.
+Le script \verb+todo-doit.sh+ produit ses résultats dans \verb+../results/xxx+, ou \verb+xxx+ est un répertoire dont le nom peut-être choisi à l'envie.
 Il les analyse ensuite et génère des programmes \texttt{python} qui servent à tracer des courbes (avec \texttt{matplotlib}). Ces courbes sont crées dans le répertoire où on appelle \verb+sle3a-doit.sh+ et ce sont ces courbes que l'on vous demande d'analyser. \\
 
 On donne sur la figure~\ref{results} le type de résultat attendu pour le prédicteur n-bit.

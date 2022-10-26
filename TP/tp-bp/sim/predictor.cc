@@ -29,7 +29,7 @@ PREDICTOR::PREDICTOR(char *prog, int argc, char *argv[])
 bool PREDICTOR::GetPrediction(UINT64 PC)
 {
    uint32_t v = table[PC & pcmask];
-   return (v > (countmax / 2)) ? TAKEN : NOT_TAKEN;
+   return v > countmax / 2 ? TAKEN : NOT_TAKEN;
 }
 
 /////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ bool PREDICTOR::GetPrediction(UINT64 PC)
 void PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget)
 {
    uint32_t v = table[PC & pcmask];
-   table[PC & pcmask] = (resolveDir == TAKEN) ? SatIncrement(v, countmax) : SatDecrement(v);
+   table[PC & pcmask] = resolveDir == TAKEN ? SatIncrement(v, countmax) : SatDecrement(v);
 }
 
 /////////////////////////////////////////////////////////////

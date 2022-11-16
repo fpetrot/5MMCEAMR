@@ -1,5 +1,10 @@
 # Quelques informations en complément des documents
 
+## Breaking news
+
+André Seznec gagne le prix de l'innovation de l'INRIA : https://www.academie-sciences.fr/fr/Laureats/laureats-2022-des-prix-inria-catuscia-palamidessi-andre-seznec-et-xavier-allamigeon.html
+
+
 ## CM n°0 et 1
 
 ### Introduction sur les caches

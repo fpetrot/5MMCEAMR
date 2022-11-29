@@ -1,5 +1,7 @@
 # Quelques informations en complément des documents
 
+## Examen 2022 d'Arthur Perais
+L'examen dure 2 heures, et voici celui de l'année passée : ![examen 2022](exam_2022.pdf)
 ## Breaking news
 
 André Seznec gagne le prix de l'innovation de l'INRIA : https://www.academie-sciences.fr/fr/Laureats/laureats-2022-des-prix-inria-catuscia-palamidessi-andre-seznec-et-xavier-allamigeon.html
@@ -36,3 +38,10 @@ Design d'un cache à correspondance directe: ![Photo du tableau](20220926_112042
 Design d'un cache associatif par ensemble, avec 128 ensembles de 2 voies chacun: ![Photos du tableau](20220926_112048.jpg)
 
 Ajout du remarquable travail de Master de Damien Gille (qui travaille chez ArianeEspace après être passé chez ARM) sur les politiques de remplacement dans les caches.
+
+## CM n°2
+Le pipeline sa vie son œuvre, RAS.
+
+## CM n°3
+En cours
+

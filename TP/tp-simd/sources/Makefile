@@ -1,10 +1,10 @@
 INC = -I.
 CFLAGS = -g -O3 $(INC) -Wall -Werror -march=sandybridge
-LDFLAGS = -lSDL
+LDFLAGS = -lSDL2
 
 CONV=conv-xxx
 
-OBJ_FILES = main.o idct.o screen.o $(CONV).o iqzz.o upsampler.o skip_segment.o huffman.o unpack_block.o 
+OBJ_FILES = main.o idct.o screen.o iqzz.o upsampler.o skip_segment.o huffman.o unpack_block.o $(CONV).o
 
 all : mjpeg
 

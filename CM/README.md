@@ -1,5 +1,13 @@
 # Quelques informations en complément des documents
 
+## Ajout de jeu de slides sur les réseaux sur puce
+
+Les slides sont "relativement" self-consistant.
+
+Celles de Ran Ginosar présentent les concepts "from the ground up", avec un lien fort vers l'implantation de circuits.
+
+Celles d'Axel Jantsch sont plus haut niveau, et ont en particulier l'intérêt de pouvoir être une référence en ce qui concerne les topologies des réseaux (sur puce ou non).
+
 ## Examen 2022 d'Arthur Perais
 L'examen dure 2 heures, et voici celui de l'année passée : ![examen 2022](exam_2022.pdf)
 ## Breaking news
